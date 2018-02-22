@@ -5,12 +5,9 @@ using UnityEngine.EventSystems;
 
 public class DragHandlerScript : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
 	public static GameObject itemBeingDragged;
-	public int rectPosX;
-	public int rectPosY;
-	public int rectWidth;
-	public int rectHeight;
 
-	Vector3 startPosition;     // Start position of the gameobject 
+
+	Vector3 startPosition;     
 	Transform startParent;
 
 	#region IBeginDragHandler implementation
@@ -25,7 +22,7 @@ public class DragHandlerScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
 	#endregion
 
 	#region IDragHandler implementation
-
+	// Change items position when the user is dragging it
 	public void OnDrag (PointerEventData eventData)
 	{
 		transform.position = Input.mousePosition;
@@ -34,30 +31,24 @@ public class DragHandlerScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
 	#endregion
 
 	#region IEndDragHandler implementation
-
+	// When user lets go of object, make it bounce back
 	public void OnEndDrag (PointerEventData eventData)
 	{
 		itemBeingDragged = null;                   		  // Idk why
 		if (transform.parent == startParent) {            // If the parent has changed
-			transform.position = Input.mousePosition;     // Set item to new position, where mouse is
+			transform.position = startPosition;     	  // Make item bounce back 
 		}
 	}
 
 	#endregion
 
 
-	// Check if object is inside the correct area. If it is: place block, if it's not: bounce back to start position
-/*	private void CollisionDetectionWalls() {
-	}
 
-	private void CollisionDetectionObjects() {
-	
-	}*/
-
-	void OnCollisionEnter2D(Collision2D coll) {
-		if (coll.gameObject.tag == "BuildArea")
-			Debug.Log ("Colling with box");
-
+	// Check for collision with the box
+	void OnTriggerEnter2D(Collider2D other) {
+		if (other.gameObject.CompareTag ("BuildArea")) {
+			gameObject.SetActive (false);
+		}
 	}
 
 
